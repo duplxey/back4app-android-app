@@ -5,29 +5,11 @@ import com.parse.Parse
 
 class App : Application() {
 
-    var notes = mutableMapOf(
-        "7IggsqFAKt" to Note(
-            objectId = "7IggsqFAKt",
-            icon = "\uD83D\uDE80",
-            title = "Deploy app",
-            content = "Go ahead and deploy your backend to Back4app."
-        ),
-        "eFRNm0hTat" to Note(
-            objectId = "eFRNm0hTat",
-            icon = "\uD83C\uDFA8",
-            title = "Design website",
-            content = "Design the website for the conference."
-        ),
-        "uC7hTQmG5F" to Note(
-            objectId = "uC7hTQmG5F",
-            icon = "\uD83D\uDC42",
-            title = "Attend the meeting",
-            content = "Attend meeting with the team to discuss the conference."
-        ),
-    )
+    val notes = mutableMapOf<String, Note>()
 
     override fun onCreate() {
         super.onCreate()
+
         Parse.initialize(
             Parse.Configuration.Builder(this)
                 .applicationId(getString(R.string.back4app_app_id))
@@ -35,5 +17,23 @@ class App : Application() {
                 .server(getString(R.string.back4app_server_url))
                 .build()
         )
+
+        val query = com.parse.ParseQuery.getQuery<com.parse.ParseObject>("Note")
+        query.orderByDescending("createdAt")
+        query.findInBackground { notes, e ->
+            if (e == null) {
+                for (parseNote in notes) {
+                    val note = Note(
+                        objectId = parseNote.objectId,
+                        icon = parseNote.getString("icon")!!,
+                        title = parseNote.getString("title")!!,
+                        content = parseNote.getString("content")!!,
+                    )
+                    this.notes[note.objectId!!] = note
+                }
+            } else {
+                println("Error: ${e.message}")
+            }
+        }
     }
 }

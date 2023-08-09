@@ -39,26 +39,31 @@ class FormActivity : ComponentActivity() {
                 note,
                 onNoteAddClick = { icon: String, title: String, content: String ->
                     if (note !== null) return@FormActivityContent
-                    val generatedObjectId = Note.generateObjectId()
-                    application.notes[generatedObjectId] = Note(
-                        objectId = generatedObjectId,
+                    val newNote = Note(
                         icon = icon,
                         title = title,
                         content = content,
                     )
-                    finish()
+                    newNote.addToParse {
+                        application.notes[it] = newNote
+                        finish()
+                    }
                 },
                 onNoteSaveClick = { icon: String, title: String, content: String ->
                     if (note === null) return@FormActivityContent
                     note.icon = icon
                     note.title = title
                     note.content = content
-                    finish()
+                    note.updateToParse {
+                        finish()
+                    }
                 },
                 onNoteDeleteClick = {
                     if (note === null) return@FormActivityContent
                     application.notes.remove(note.objectId)
-                    finish()
+                    note.deleteFromParse {
+                        finish()
+                    }
                 },
             )
         }

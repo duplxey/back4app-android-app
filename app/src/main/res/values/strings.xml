@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">back4app-android-app</string>
     <string name="back4app_server_url">https://parseapi.back4app.com/</string>
     <string name="back4app_app_id">ElMux4SpiGYfp5b0UaYV4ZMKIPSGJUytiAg0Unu8</string>
     <string name="back4app_client_key">rg18UDjHkrnCjbGNW7qCWaU4wJxXGrrSH3PvgffR</string>

@@ -59,14 +59,16 @@ class FormActivity : ComponentActivity() {
                     updatedNote.icon = icon
                     updatedNote.title = title
                     updatedNote.content = content
-                    note.updateToParse {
+                    updatedNote.updateToParse {
                         viewModel.notes.value += (it to updatedNote)
                         finish()
                     }
                 },
                 onNoteDeleteClick = {
                     if (note === null) return@FormActivityContent
-                    viewModel.notes.value = viewModel.notes.value.filter { it.value.objectId != note.objectId }
+                    viewModel.notes.value = viewModel.notes.value.filter {
+                        it.value.objectId != note.objectId
+                    }
                     note.deleteFromParse {
                         finish()
                     }
@@ -98,7 +100,12 @@ fun FormActivityContent(
                 if (note !== null) {
                     ExtendedFloatingActionButton(
                         onClick = { onNoteDeleteClick() },
-                        icon = { Icon(Icons.Filled.Delete, contentDescription = "Delete") },
+                        icon = {
+                            Icon(
+                                Icons.Filled.Delete,
+                                contentDescription = "Delete"
+                            )
+                        },
                         text = { Text("Delete") },
                     )
                 }

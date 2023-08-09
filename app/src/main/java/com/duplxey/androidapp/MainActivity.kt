@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,14 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
+    private val viewModel = AppViewModel.getInstance()
 
-    private fun render() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val context = this as Context
+
         setContent {
-            val application = application as App
-            val context = this as Context
-
             MainActivityContent(
-                application.notes,
+                viewModel = viewModel,
                 onNoteListItemClick = {
                     val intent = Intent(context, FormActivity::class.java)
                     intent.putExtra("objectId", it.objectId)
@@ -53,24 +55,15 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        render()
-    }
-
-    override fun onRestart() {
-        super.onRestart()
-        render()
-    }
 }
 
 @Composable
 fun MainActivityContent(
-    notes: MutableMap<String, Note>,
+    viewModel: AppViewModel,
     onNoteListItemClick: (note: Note) -> Unit,
     onNoteAddClick: () -> Unit,
 ) {
+    val notes = viewModel.notes.value
     MaterialTheme {
         Scaffold(
             topBar = { TopAppBar(title = { Text("My Notes") }) },

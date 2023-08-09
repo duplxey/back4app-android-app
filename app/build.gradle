@@ -52,6 +52,8 @@ android {
 
 dependencies {
 
+    implementation "androidx.activity:activity-ktx:1.7.2"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1"
     implementation "com.github.parse-community.Parse-SDK-Android:parse:4.2.0"
     implementation "androidx.core:core-ktx:1.8.0"
     implementation platform("org.jetbrains.kotlin:kotlin-bom:1.8.0")

@@ -3,6 +3,7 @@ package com.duplxey.androidapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,11 +31,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 
 class FormActivity : ComponentActivity() {
+    private val viewModel = AppViewModel.getInstance()
 
-    private fun render(note: Note?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val objectId = intent.getStringExtra("objectId")
+        val note = if (objectId !== null) viewModel.notes.value[objectId] else null
+
         setContent {
-            val application = application as App
-
             FormActivityContent(
                 note,
                 onNoteAddClick = { icon: String, title: String, content: String ->
@@ -45,39 +49,30 @@ class FormActivity : ComponentActivity() {
                         content = content,
                     )
                     newNote.addToParse {
-                        application.notes[it] = newNote
+                        viewModel.notes.value += (it to newNote)
                         finish()
                     }
                 },
                 onNoteSaveClick = { icon: String, title: String, content: String ->
                     if (note === null) return@FormActivityContent
-                    note.icon = icon
-                    note.title = title
-                    note.content = content
+                    val updatedNote = note.copy()
+                    updatedNote.icon = icon
+                    updatedNote.title = title
+                    updatedNote.content = content
                     note.updateToParse {
+                        viewModel.notes.value += (it to updatedNote)
                         finish()
                     }
                 },
                 onNoteDeleteClick = {
                     if (note === null) return@FormActivityContent
-                    application.notes.remove(note.objectId)
+                    viewModel.notes.value = viewModel.notes.value.filter { it.value.objectId != note.objectId }
                     note.deleteFromParse {
                         finish()
                     }
                 },
             )
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val appInstance = application as App
-
-        val objectId = intent.getStringExtra("objectId")
-        val note = if (objectId !== null) appInstance.notes[objectId] else null
-
-        render(note)
     }
 }
 
